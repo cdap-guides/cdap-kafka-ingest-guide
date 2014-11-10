@@ -22,18 +22,14 @@ import co.cask.cdap.api.dataset.lib.KeyValueTable;
  * KafkaIngestionApp illustrates how to consume Kafka messages in a CDAP application using cdap-kafka-pack.
  */
 public class KafkaIngestionApp extends AbstractApplication {
-  static final String NAME = "KafkaIngestion";
-  static final String STATS_TABLE_NAME = "kafkaCounter";
-  static final String SERVICE_NAME = "KafkaStatsService";
-  static final String OFFSET_TABLE_NAME = "kafkaOffsets";
 
   @Override
   public void configure() {
-    setName(NAME);
+    setName(Constants.APP_NAME);
     setDescription("Subscribe to Kafka Messages - Maintain overall count and size of messages received");
-    createDataset(OFFSET_TABLE_NAME, KeyValueTable.class);
-    createDataset(STATS_TABLE_NAME, KeyValueTable.class);
+    createDataset(Constants.OFFSET_TABLE_NAME, KeyValueTable.class);
+    createDataset(Constants.STATS_TABLE_NAME, KeyValueTable.class);
     addFlow(new KafkaIngestionFlow());
-    addService(SERVICE_NAME, new KafkaStatsHandler());
+    addService(Constants.SERVICE_NAME, new KafkaStatsHandler());
   }
 }

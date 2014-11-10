@@ -17,14 +17,14 @@ import javax.ws.rs.Path;
 @Path("/v1")
 public class KafkaStatsHandler extends AbstractHttpServiceHandler {
 
-  @UseDataSet(KafkaIngestionApp.STATS_TABLE_NAME)
+  @UseDataSet(Constants.STATS_TABLE_NAME)
   private KeyValueTable statsTable;
 
   @Path("avgSize")
   @GET
   public void getStats(HttpServiceRequest request, HttpServiceResponder responder) throws Exception {
-    long totalCount = statsTable.incrementAndGet(Bytes.toBytes(KafkaMsgCounterFlowlet.COUNTKEY), 0L);
-    long totalSize = statsTable.incrementAndGet(Bytes.toBytes(KafkaMsgCounterFlowlet.SIZEKEY), 0L);
+    long totalCount = statsTable.incrementAndGet(Bytes.toBytes(Constants.COUNT_KEY), 0L);
+    long totalSize = statsTable.incrementAndGet(Bytes.toBytes(Constants.SIZE_KEY), 0L);
     responder.sendJson(totalCount > 0 ? totalSize / totalCount : 0);
   }
 }

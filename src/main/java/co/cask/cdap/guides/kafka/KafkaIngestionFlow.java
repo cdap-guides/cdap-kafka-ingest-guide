@@ -10,20 +10,17 @@ import co.cask.cdap.api.flow.FlowSpecification;
  * kafka.topic - Kafka Topic to subscribe.
  */
 public class KafkaIngestionFlow implements Flow {
-  static final String NAME = "KafkaIngestionFlow";
-  static final String KAFKA_FLOWLET = "kafkaSubFlowlet";
-  static final String SINK_FLOWLET = "countMessages";
 
   @Override
   public FlowSpecification configure() {
     return FlowSpecification.Builder.with()
-      .setName(NAME)
+      .setName(Constants.FLOW_NAME)
       .setDescription("Subscribes to Kafka Messages")
       .withFlowlets()
-        .add(KAFKA_FLOWLET, new KafkaSubFlowlet())
-        .add(SINK_FLOWLET, new KafkaMsgCounterFlowlet())
+        .add(Constants.KAFKA_FLOWLET, new KafkaSubFlowlet())
+        .add(Constants.COUNTER_FLOWLET, new KafkaMsgCounterFlowlet())
       .connect()
-        .from(KAFKA_FLOWLET).to(SINK_FLOWLET)
+        .from(Constants.KAFKA_FLOWLET).to(Constants.COUNTER_FLOWLET)
       .build();
   }
 }

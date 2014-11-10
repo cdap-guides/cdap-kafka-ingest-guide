@@ -97,8 +97,8 @@ public class KafkaIngestionAppTest extends TestBase {
 
     // Deploy the KafkaIngestionApp application
     ApplicationManager appManager = deployApplication(KafkaIngestionApp.class);
-    FlowManager flowManager = appManager.startFlow(KafkaIngestionFlow.NAME, runtimeArgs);
-    ServiceManager serviceManager = appManager.startService(KafkaIngestionApp.SERVICE_NAME);
+    FlowManager flowManager = appManager.startFlow(Constants.FLOW_NAME, runtimeArgs);
+    ServiceManager serviceManager = appManager.startService(Constants.SERVICE_NAME);
 
     KafkaPublisher publisher = kafkaClient.getPublisher(KafkaPublisher.Ack.ALL_RECEIVED, Compression.NONE);
     KafkaPublisher.Preparer preparer = publisher.prepare(KAFKA_TOPIC);
@@ -108,8 +108,8 @@ public class KafkaIngestionAppTest extends TestBase {
     }
     preparer.send();
 
-    RuntimeMetrics countMetrics = RuntimeStats.getFlowletMetrics(KafkaIngestionApp.NAME, KafkaIngestionFlow.NAME,
-                                                                 KafkaIngestionFlow.SINK_FLOWLET);
+    RuntimeMetrics countMetrics = RuntimeStats.getFlowletMetrics(Constants.APP_NAME, Constants.FLOW_NAME,
+                                                                 Constants.COUNTER_FLOWLET);
     countMetrics.waitForProcessed(10, 10, TimeUnit.SECONDS);
     try {
       URL serviceURL = serviceManager.getServiceURL();

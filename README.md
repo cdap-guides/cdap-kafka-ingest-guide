@@ -94,19 +94,15 @@ has a Flow, a Service, and creates a Dataset:
 
 ```java
 public class KafkaIngestionApp extends AbstractApplication {
-  static final String NAME = "KafkaIngestion";
-  static final String STATS_TABLE_NAME = "kafkaCounter";
-  static final String SERVICE_NAME = "msgStatsService";
-  static final String OFFSET_TABLE_NAME = "kafkaOffsets";
-
+  
   @Override
   public void configure() {
-    setName(NAME);
+    setName(Constants.APP_NAME);
     setDescription("Subscribe to Kafka Messages - Maintain overall count and size of messages received");
-    createDataset(OFFSET_TABLE_NAME, KeyValueTable.class);
-    createDataset(STATS_TABLE_NAME, KeyValueTable.class);
+    createDataset(Constants.OFFSET_TABLE_NAME, KeyValueTable.class);
+    createDataset(Constants.STATS_TABLE_NAME, KeyValueTable.class);
     addFlow(new KafkaIngestionFlow());
-    addService(SERVICE_NAME, new KafkaStatsHandler());
+    addService(Constants.SERVICE_NAME, new KafkaStatsHandler());
   }
 }
 ```
@@ -115,20 +111,17 @@ The `KafkaIngestionFlow` connects the `KafkaSubFlowlet` to `KafkaMsgCounterFlowl
 
 ```java
 public class KafkaIngestionFlow implements Flow {
-  static final String NAME = "KafkaIngestionFlow";
-  static final String KAFKA_FLOWLET = "kafkaSubFlowlet";
-  static final String SINK_FLOWLET = "countMessages";
 
   @Override
   public FlowSpecification configure() {
     return FlowSpecification.Builder.with()
-      .setName(NAME)
+      .setName(Constants.FLOW_NAME)
       .setDescription("Subscribes to Kafka Messages")
       .withFlowlets()
-        .add(KAFKA_FLOWLET, new KafkaSubFlowlet())
-        .add(SINK_FLOWLET, new KafkaMsgCounterFlowlet())
+        .add(Constants.KAFKA_FLOWLET, new KafkaSubFlowlet())
+        .add(Constants.COUNTER_FLOWLET, new KafkaMsgCounterFlowlet())
       .connect()
-        .from(KAFKA_FLOWLET).to(SINK_FLOWLET)
+        .from(Constants.KAFKA_FLOWLET).to(Constants.COUNTER_FLOWLET)
       .build();
   }
 }
@@ -140,8 +133,10 @@ available in the `cdap-packs-kafka` library:
 ```java
 public class KafkaSubFlowlet extends Kafka08ConsumerFlowlet<byte[], String> {
   private static final Logger LOG = LoggerFactory.getLogger(KafkaSubFlowlet.class);
-  @UseDataSet(KafkaIngestionApp.OFFSET_TABLE_NAME)
+
+  @UseDataSet(Constants.OFFSET_TABLE_NAME)
   private KeyValueTable offsetStore;
+
   private OutputEmitter<String> emitter;
 
   @Override
@@ -152,8 +147,8 @@ public class KafkaSubFlowlet extends Kafka08ConsumerFlowlet<byte[], String> {
     } else if (runtimeArgs.containsKey("kafka.brokers")) {
       kafkaConfigurer.setBrokers(runtimeArgs.get("kafka.brokers"));
     }
+
     kafkaConfigurer.addTopicPartition(runtimeArgs.get("kafka.topic"), 0);
-    kafkaConfigurer.addTopicPartition(runtimeArgs.get("kafka.topic"), 1);
   }
 
   @Override
@@ -169,19 +164,22 @@ public class KafkaSubFlowlet extends Kafka08ConsumerFlowlet<byte[], String> {
 }
 ```
 
-Tweets pulled by the `TweetCollectorFlowlet` are consumed by the
-`StatsRecorderFlowlet` that updates the total number of tweets and their
-total body size in a Dataset:
+Messages received by the `KafkaSubFlowlet` are consumed by the
+`KafkaMsgCounterFlowlet` that updates the total number of messages and their
+total size in a Dataset:
 
 ```java
-public class StatsRecorderFlowlet extends AbstractFlowlet {
-  @UseDataSet(TwitterAnalysisApp.TABLE_NAME)
-  private KeyValueTable statsTable;
+public class KafkaMsgCounterFlowlet extends AbstractFlowlet {
+  private static final Logger LOG = LoggerFactory.getLogger(KafkaMsgCounterFlowlet.class);
+
+  @UseDataSet(Constants.STATS_TABLE_NAME)
+  private KeyValueTable counter;
 
   @ProcessInput
-  public void process(Tweet tweet) {
-    statsTable.increment(Bytes.toBytes("totalCount"), 1);
-    statsTable.increment(Bytes.toBytes("totalSize"), tweet.getText().length());
+  public void process(String string) {
+    LOG.info("Received: {}", string);
+    counter.increment(Bytes.toBytes(Constants.COUNT_KEY), 1L);
+    counter.increment(Bytes.toBytes(Constants.SIZE_KEY), string.length());
   }
 }
 ```
@@ -195,14 +193,15 @@ average tweet size and serve it over HTTP:
 ```java
 @Path("/v1")
 public class KafkaStatsHandler extends AbstractHttpServiceHandler {
-  @UseDataSet(KafkaIngestionApp.STATS_TABLE_NAME)
+
+  @UseDataSet(Constants.STATS_TABLE_NAME)
   private KeyValueTable statsTable;
 
   @Path("avgSize")
   @GET
   public void getStats(HttpServiceRequest request, HttpServiceResponder responder) throws Exception {
-    long totalCount = statsTable.incrementAndGet(Bytes.toBytes(KafkaMsgCounterFlowlet.COUNTKEY), 0L);
-    long totalSize = statsTable.incrementAndGet(Bytes.toBytes(KafkaMsgCounterFlowlet.SIZEKEY), 0L);
+    long totalCount = statsTable.incrementAndGet(Bytes.toBytes(Constants.COUNT_KEY), 0L);
+    long totalSize = statsTable.incrementAndGet(Bytes.toBytes(Constants.SIZE_KEY), 0L);
     responder.sendJson(totalCount > 0 ? totalSize / totalCount : 0);
   }
 }

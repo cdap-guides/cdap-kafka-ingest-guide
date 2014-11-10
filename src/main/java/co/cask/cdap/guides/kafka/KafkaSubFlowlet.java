@@ -17,7 +17,7 @@ public class KafkaSubFlowlet extends Kafka08ConsumerFlowlet<byte[], String> {
 
   private static final Logger LOG = LoggerFactory.getLogger(KafkaSubFlowlet.class);
 
-  @UseDataSet(KafkaIngestionApp.OFFSET_TABLE_NAME)
+  @UseDataSet(Constants.OFFSET_TABLE_NAME)
   private KeyValueTable offsetStore;
 
   private OutputEmitter<String> emitter;

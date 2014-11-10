@@ -15,6 +15,6 @@
  */
 
 /**
- * Package for CDAP Application.
+ * Package for KafkaIngestion Application.
  */
 package co.cask.cdap.guides.kafka;
