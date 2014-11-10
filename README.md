@@ -188,7 +188,7 @@ In a real-world scenario, the Flowlet could perform more sophisticated
 processing on the messages received from Kafka.
 
 Finally, the `KafkaStatsHandler` uses the `kafkaCounter` Dataset to compute the
-average tweet size and serve it over HTTP:
+average message size and serve it over HTTP:
 
 ```java
 @Path("/v1")
