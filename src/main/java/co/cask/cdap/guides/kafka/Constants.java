@@ -4,7 +4,6 @@ package co.cask.cdap.guides.kafka;
  *
  */
 public final class Constants {
-  public static final String APP_NAME = "KafkaIngestion";
   public static final String FLOW_NAME = "KafkaIngestionFlow";
   public static final String SERVICE_NAME = "KafkaStatsService";
   public static final String STATS_TABLE_NAME = "kafkaCounter";

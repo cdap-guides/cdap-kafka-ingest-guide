@@ -4,10 +4,14 @@ import co.cask.cdap.api.flow.Flow;
 import co.cask.cdap.api.flow.FlowSpecification;
 
 /**
- * Flow to ingest Kafka Messages (Works with Kafka 0.8.x cluster).
- * KafkaIngestionFlow expects the following runtime arguments.
- * kafka.zookeeper (or) kafka.brokers - Kafka Instance to connect.
- * kafka.topic - Kafka Topic to subscribe.
+ * Flow to ingest Kafka Messages (works with Kafka 0.8.x cluster).
+ * <p>
+ * Requires these runtime arguments:
+ * <ul>
+ * <li>kafka.zookeeper: Kafka Zookeeper connection string</li>
+ * <li>kafka.topic: Subscribe to Kafka Topic</li>
+ * </ul>
+ * </p>
  */
 public class KafkaIngestionFlow implements Flow {
 

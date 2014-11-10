@@ -93,7 +93,7 @@ public class KafkaIngestionAppTest extends TestBase {
   public void test() throws TimeoutException, InterruptedException, IOException {
     Map<String, String> runtimeArgs = Maps.newHashMap();
     runtimeArgs.put("kafka.topic", KAFKA_TOPIC);
-    runtimeArgs.put("kafka.brokers", "localhost:" + kafkaPort);
+    runtimeArgs.put("kafka.zookeeper", zkServer.getConnectionStr());
 
     // Deploy the KafkaIngestionApp application
     ApplicationManager appManager = deployApplication(KafkaIngestionApp.class);
@@ -108,7 +108,8 @@ public class KafkaIngestionAppTest extends TestBase {
     }
     preparer.send();
 
-    RuntimeMetrics countMetrics = RuntimeStats.getFlowletMetrics(Constants.APP_NAME, Constants.FLOW_NAME,
+    RuntimeMetrics countMetrics = RuntimeStats.getFlowletMetrics(KafkaIngestionApp.class.getSimpleName(),
+                                                                 Constants.FLOW_NAME,
                                                                  Constants.COUNTER_FLOWLET);
     countMetrics.waitForProcessed(10, 10, TimeUnit.SECONDS);
     try {

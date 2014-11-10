@@ -19,11 +19,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>co.cask.cdap.guides.kafka</groupId>
-  <artifactId>KafkaIngestionApp</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <artifactId>cdap-kafka-ingest-guide</artifactId>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
 
-  <name>CDAP Application</name>
+  <name>CDAP Kafka Ingest Guide</name>
 
   <properties>
     <app.main.class>co.cask.cdap.guides.kafka.KafkaIngestionApp</app.main.class>

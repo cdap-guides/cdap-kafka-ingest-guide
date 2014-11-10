@@ -1,13 +1,11 @@
 Subscribing to Kafka Messages
 =============================
-
 Subscribing to a Kafka Topic and processing the messages received in realtime is a common requirement in
 big data applications. In this guide, you will learn how to accomplish it with the Cask Data Application Platform
 ([CDAP](http://cdap.io)).
 
 What You Will Build
 -------------------
-
 You will build a CDAP application that consumes data from a 0.8.x Kafka Cluster on a specific Topic and computes the 
 average size of the messages received. You will:
 
@@ -24,14 +22,12 @@ average size of the messages received. You will:
 
 What You Will Need
 ------------------
-
 - [JDK 6 or JDK 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 - [Apache Maven 3.0+](http://maven.apache.org/)
 - [CDAP SDK](http://docs.cdap.io/cdap/current/en/developer-guide/getting-started/standalone/index.html)
 
 Let’s Build It!
 ---------------
-
 Following sections will guide you through building an application from
 scratch. If you are interested in deploying and running the application
 right away, you can clone its source code from this GitHub repository.
@@ -209,19 +205,17 @@ public class KafkaStatsHandler extends AbstractHttpServiceHandler {
 
 ### Configuring `KafkaSubFlowlet`
 
-In order to utilize the `KafkaSubFlowlet`, Kafka Zookeeper String *OR* Kafka Brokers information along with 
+In order to utilize the `KafkaSubFlowlet`, Kafka Zookeeper connection string along with 
 the Kafka Topic must be provided as runtime arguments. You can provide these to the `KafkaSubFlowlet` as 
 runtime arguments of `KafkaIngestionFlow`. The keys of the required runtime arguments are:
 
 ```console
 kafka.zookeeper
-kafka.brokers
 kafka.topic
 ```
 
 Build & Run
 -----------
-
 The KafkaIngestionApp application can be built and packaged using the Apache Maven command:
 
     mvn clean package
@@ -239,13 +233,13 @@ We can then deploy the application to a standalone CDAP installation and
 start its components:
 
     cdap-cli.sh deploy app target/cdap-kafka-ingest-guide-1.0.0.jar
-    cdap-cli.sh start flow KafkaIngestion.KafkaIngestionFlow '--kafka.brokers=127.0.0.1:1234 --kafka.topic=MyTopic'
-    cdap-cli.sh start service KafkaIngestion.KafkaStatsService
+    cdap-cli.sh start flow KafkaIngestionApp.KafkaIngestionFlow '--kafka.zookeeper=127.0.0.1:2181/kafka --kafka.topic=MyTopic'
+    cdap-cli.sh start service KafkaIngestionApp.KafkaStatsService
 
 Once Flow is started, Kafka Messages are processed as they are published. You can query for
 the average Kafka Message size:
 
-    curl http://localhost:10000/v2/apps/KafkaIngestion/services/KafkaStatsService/methods/v1/avgSize
+    curl http://localhost:10000/v2/apps/KafkaIngestionApp/services/KafkaStatsService/methods/v1/avgSize
 
 Example output:
 
@@ -253,12 +247,10 @@ Example output:
 
 Share and Discuss!
 ------------------
-
 Have a question? Discuss at the [CDAP User Mailing List.](https://groups.google.com/forum/#!forum/cdap-user)
 
 License
 -------
-
 Copyright © 2014 Cask Data, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -272,4 +264,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-

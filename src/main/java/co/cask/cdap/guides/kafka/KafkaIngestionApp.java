@@ -25,7 +25,6 @@ public class KafkaIngestionApp extends AbstractApplication {
 
   @Override
   public void configure() {
-    setName(Constants.APP_NAME);
     setDescription("Subscribe to Kafka Messages - Maintain overall count and size of messages received");
     createDataset(Constants.OFFSET_TABLE_NAME, KeyValueTable.class);
     createDataset(Constants.STATS_TABLE_NAME, KeyValueTable.class);
