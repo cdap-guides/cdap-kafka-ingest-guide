@@ -11,7 +11,7 @@ What You Will Build
 You will build a CDAP application that consumes data from a 0.8.x Kafka Cluster on a specific Topic and computes the 
 average size of the messages received. You will:
 
-- Build a a realtime 
+- Build a realtime 
   [Flow](http://docs.cdap.io/cdap/current/en/developer-guide/building-blocks/flows-flowlets/flows.html)
   to subscribes to a Kafka Topic;
 - Build a Flowlet using the [cdap-pack-kafka](https://github.com/caskdata/cdap-packs) library
@@ -206,7 +206,6 @@ public class KafkaStatsHandler extends AbstractHttpServiceHandler {
     responder.sendJson(totalCount > 0 ? totalSize / totalCount : 0);
   }
 }
-
 ```
 
 ### Configuring `KafkaSubFlowlet`

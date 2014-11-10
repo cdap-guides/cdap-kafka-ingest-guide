@@ -132,7 +132,7 @@ public class KafkaIngestionAppTest extends TestBase {
     prop.setProperty("socket.send.buffer.bytes", "1048576");
     prop.setProperty("socket.receive.buffer.bytes", "1048576");
     prop.setProperty("socket.request.max.bytes", "104857600");
-    prop.setProperty("num.partitions", "2");
+    prop.setProperty("num.partitions", "1");
     prop.setProperty("log.retention.hours", "24");
     prop.setProperty("log.flush.interval.messages", "10000");
     prop.setProperty("log.flush.interval.ms", "1000");
@@ -140,12 +140,6 @@ public class KafkaIngestionAppTest extends TestBase {
     prop.setProperty("zookeeper.connect", zkConnectStr);
     prop.setProperty("zookeeper.connection.timeout.ms", "1000000");
     prop.setProperty("default.replication.factor", "1");
-
-    // These are for Kafka-0.7
-    prop.setProperty("brokerid", "1");
-    prop.setProperty("zk.connect", zkConnectStr);
-    prop.setProperty("zk.connectiontimeout.ms", "1000000");
-
     return prop;
   }
 

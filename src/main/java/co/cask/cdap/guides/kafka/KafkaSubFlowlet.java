@@ -32,7 +32,6 @@ public class KafkaSubFlowlet extends Kafka08ConsumerFlowlet<byte[], String> {
     }
 
     kafkaConfigurer.addTopicPartition(runtimeArgs.get("kafka.topic"), 0);
-    kafkaConfigurer.addTopicPartition(runtimeArgs.get("kafka.topic"), 1);
   }
 
   @Override
