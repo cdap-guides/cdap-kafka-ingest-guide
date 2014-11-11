@@ -1,24 +1,24 @@
-Subscribing to Kafka Messages
-=============================
-Subscribing to a Kafka Topic and processing the messages received in realtime is a common requirement in
+Subscribing to Kafka 
+====================
+Subscribing to a Kafka topic and processing the messages received in realtime is a common requirement in
 big data applications. In this guide, you will learn how to accomplish it with the Cask Data Application Platform
 ([CDAP](http://cdap.io)).
 
 What You Will Build
 -------------------
-You will build a CDAP application that consumes data from a Kafka Cluster v0.8.x on a specific Topic and computes the 
+You will build a CDAP application that consumes data from a Kafka cluster v0.8.x on a specific Topic and computes the 
 average size of the messages received. You will:
 
 - Build a realtime 
   [Flow](http://docs.cdap.io/cdap/current/en/developers-manual/building-blocks/flows-flowlets/index.html)
-  that subscribes to a Kafka Topic;
+  that subscribes to a Kafka topic;
 - Build a Flowlet using the [cdap-kafka-pack library](https://github.com/caskdata/cdap-packs);
 - Use a 
   [Dataset](http://docs.cdap.io/cdap/current/en/developers-manual/building-blocks/datasets/index.html)
   to persist the results of the analysis; and
 - Build a 
   [Service](http://docs.cdap.io/cdap/current/en/developers-manual/building-blocks/services.html)
-  to retrieve the analysis results via a HTTP RESTful endpoint.
+  to retrieve the analysis results via an HTTP RESTful endpoint.
 
 What You Will Need
 ------------------
@@ -38,7 +38,7 @@ the [Build and Run Application](#build-and-run-application) section.
 
 Realtime processing capability within CDAP is supported by Flows. The
 application we are building in this guide uses a Flow for processing the
-messages received on a Kafka Topic. The count and total size of these messages 
+messages received on a Kafka topic. The count and total size of these messages 
 is persisted in a Dataset and made available via an HTTP RESTful endpoint 
 using a Service.
 
@@ -46,10 +46,10 @@ using a Service.
 
 The Flow consists of two processing nodes called Flowlets:
 
--   A subscriber Flowlet that subscribes to a specific topic on a Kafka Cluster 
+-   A subscriber Flowlet that subscribes to a specific topic on a Kafka cluster 
     and emits the messages received to the next Flowlet.
--   A counter Flowlet that consumes the message emitted by the Kafka Subscriber 
-    Flowlet to update the basic statistics of Kafka Messages: total message size and
+-   A counter Flowlet that consumes the message emitted by the Kafka subscriber 
+    Flowlet to update the basic statistics of Kafka messages: total message size and
     count.
 
 ### Application Implementation
@@ -69,7 +69,7 @@ The application will use the `cdap-kafka-pack` library which includes an impleme
 `Kafka08ConsumerFlowlet`, which is designed to work with a 0.8.x Kakfa Cluster. If you want to 
 use the application with a 0.7.x Kakfa Cluster, please refer to the documentation of `cdap-kafka-pack`.
 
-You'll need to add the correct `cdap-kafka-pack` library, based on your Kafka Cluster version 
+You'll need to add the correct `cdap-kafka-pack` library, based on your Kafka cluster version 
 (`cdap-flow-compat-0.8` for this guide) as a dependency to your project's pom.xml:
 
 ```xml
@@ -93,7 +93,7 @@ public class KafkaIngestionApp extends AbstractApplication {
   @Override
   public void configure() {
     setName(Constants.APP_NAME);
-    setDescription("Subscribe to Kafka Messages - Maintain overall count and size of messages received");
+    setDescription("Subscribes to Kafka messages - Maintains overall count and size of messages received");
     createDataset(Constants.OFFSET_TABLE_NAME, KeyValueTable.class);
     createDataset(Constants.STATS_TABLE_NAME, KeyValueTable.class);
     addFlow(new KafkaIngestionFlow());
@@ -111,7 +111,7 @@ public class KafkaIngestionFlow implements Flow {
   public FlowSpecification configure() {
     return FlowSpecification.Builder.with()
       .setName(Constants.FLOW_NAME)
-      .setDescription("Subscribes to Kafka Messages")
+      .setDescription("Subscribes to Kafka messages")
       .withFlowlets()
         .add(Constants.KAFKA_FLOWLET, new KafkaSubFlowlet())
         .add(Constants.COUNTER_FLOWLET, new KafkaMsgCounterFlowlet())
@@ -198,8 +198,8 @@ public class KafkaStatsHandler extends AbstractHttpServiceHandler {
 
 ### Configuring the `KafkaSubFlowlet`
 
-In order to utilize the `KafkaSubFlowlet`, a Kafka Zookeeper connection string along with 
-a Kafka Topic must be provided as runtime arguments. You can provide these to the `KafkaSubFlowlet` as 
+In order to utilize the `KafkaSubFlowlet`, a Kafka zookeeper connection string along with 
+a Kafka topic must be provided as runtime arguments. You can provide these to the `KafkaSubFlowlet` as 
 runtime arguments of the `KafkaIngestionFlow`. The keys of these runtime arguments are:
 
 ```console
@@ -229,8 +229,8 @@ start its components (note the runtime arguments as described above in [Configur
     curl http://localhost:10000/v2/apps/KafkaIngestionApp/flows/KafkaIngestionFlow/start -d '{"kafka.zookeeper":"127.0.0.1:1234", "kafka.topic":"MyTopic"}'
     curl -X POST http://localhost:10000/v2/apps/KafkaIngestionApp/services/KafkaStatsService/start
     
-Once the Flow is started, Kafka Messages are processed as they are published. You can query for
-the average Kafka Message size:
+Once the Flow is started, Kafka messages are processed as they are published. You can query for
+the average Kafka message size:
 
     curl http://localhost:10000/v2/apps/KafkaIngestionApp/services/KafkaStatsService/methods/v1/avgSize
 

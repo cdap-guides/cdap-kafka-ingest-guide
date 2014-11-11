@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package co.cask.cdap.guides.kafka; 
 
 import co.cask.cdap.api.app.AbstractApplication;
@@ -25,7 +26,7 @@ public class KafkaIngestionApp extends AbstractApplication {
 
   @Override
   public void configure() {
-    setDescription("Subscribe to Kafka Messages - Maintain overall count and size of messages received");
+    setDescription("Subscribes to Kafka messages - Maintains overall count and size of messages received");
     createDataset(Constants.OFFSET_TABLE_NAME, KeyValueTable.class);
     createDataset(Constants.STATS_TABLE_NAME, KeyValueTable.class);
     addFlow(new KafkaIngestionFlow());
