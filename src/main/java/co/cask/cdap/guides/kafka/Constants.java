@@ -1,7 +1,7 @@
 package co.cask.cdap.guides.kafka;
 
 /**
- *
+ * Contains constants used in the Application.
  */
 public final class Constants {
   public static final String FLOW_NAME = "KafkaIngestionFlow";

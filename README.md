@@ -137,12 +137,7 @@ public class KafkaSubFlowlet extends Kafka08ConsumerFlowlet<byte[], String> {
   @Override
   protected void configureKafka(KafkaConfigurer kafkaConfigurer) {
     Map<String, String> runtimeArgs = getContext().getRuntimeArguments();
-    if (runtimeArgs.containsKey("kafka.zookeeper")) {
-      kafkaConfigurer.setZooKeeper(runtimeArgs.get("kafka.zookeeper"));
-    } else if (runtimeArgs.containsKey("kafka.brokers")) {
-      kafkaConfigurer.setBrokers(runtimeArgs.get("kafka.brokers"));
-    }
-
+    kafkaConfigurer.setZooKeeper(runtimeArgs.get("kafka.zookeeper"));
     kafkaConfigurer.addTopicPartition(runtimeArgs.get("kafka.topic"), 0);
   }
 
