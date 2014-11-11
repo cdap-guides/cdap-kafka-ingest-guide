@@ -4,7 +4,7 @@ import co.cask.cdap.api.flow.Flow;
 import co.cask.cdap.api.flow.FlowSpecification;
 
 /**
- * Flow to ingest Kafka Messages (works with Kafka 0.8.x cluster).
+ * Flow to ingest Kafka Messages (works with Kafka Cluster v0.8.x).
  * <p>
  * Requires these runtime arguments:
  * <ul>

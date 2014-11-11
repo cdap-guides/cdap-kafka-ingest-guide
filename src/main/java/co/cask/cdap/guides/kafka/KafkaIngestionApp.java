@@ -19,7 +19,7 @@ import co.cask.cdap.api.app.AbstractApplication;
 import co.cask.cdap.api.dataset.lib.KeyValueTable;
 
 /**
- * KafkaIngestionApp illustrates how to consume Kafka messages in a CDAP application using cdap-kafka-pack.
+ * Demonstrates consuming Kafka messages in a CDAP application using the <code>cdap-kafka-pack<\code>.
  */
 public class KafkaIngestionApp extends AbstractApplication {
 

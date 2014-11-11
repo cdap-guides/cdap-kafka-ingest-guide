@@ -25,6 +25,7 @@ public class KafkaStatsHandler extends AbstractHttpServiceHandler {
   public void getStats(HttpServiceRequest request, HttpServiceResponder responder) throws Exception {
     long totalCount = statsTable.incrementAndGet(Bytes.toBytes(Constants.COUNT_KEY), 0L);
     long totalSize = statsTable.incrementAndGet(Bytes.toBytes(Constants.SIZE_KEY), 0L);
-    responder.sendJson(totalCount > 0 ? totalSize / totalCount : 0);
+    int avgSize = (totalCount > 0) ? (int) (totalSize / totalCount) : 0;
+    responder.sendJson(avgSize);
   }
 }

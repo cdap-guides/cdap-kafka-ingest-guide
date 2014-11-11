@@ -6,25 +6,25 @@ big data applications. In this guide, you will learn how to accomplish it with t
 
 What You Will Build
 -------------------
-You will build a CDAP application that consumes data from a 0.8.x Kafka Cluster on a specific Topic and computes the 
+You will build a CDAP application that consumes data from a Kafka Cluster v0.8.x on a specific Topic and computes the 
 average size of the messages received. You will:
 
 - Build a realtime 
-  [Flow](http://docs.cdap.io/cdap/current/en/developer-guide/building-blocks/flows-flowlets/flows.html)
-  to subscribes to a Kafka Topic;
-- Build a Flowlet using the [cdap-pack-kafka](https://github.com/caskdata/cdap-packs) library
+  [Flow](http://docs.cdap.io/cdap/current/en/developers-manual/building-blocks/flows-flowlets/index.html)
+  that subscribes to a Kafka Topic;
+- Build a Flowlet using the [cdap-kafka-pack library](https://github.com/caskdata/cdap-packs);
 - Use a 
-  [Dataset](http://docs.cdap.io/cdap/current/en/developer-guide/building-blocks/datasets/index.html)
+  [Dataset](http://docs.cdap.io/cdap/current/en/developers-manual/building-blocks/datasets/index.html)
   to persist the results of the analysis; and
 - Build a 
-  [Service](http://docs.cdap.io/cdap/current/en/developer-guide/building-blocks/services.html)
-  to serve the analysis results via a RESTful endpoint.
+  [Service](http://docs.cdap.io/cdap/current/en/developers-manual/building-blocks/services.html)
+  to retrieve the analysis results via a HTTP RESTful endpoint.
 
 What You Will Need
 ------------------
 - [JDK 6 or JDK 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 - [Apache Maven 3.0+](http://maven.apache.org/)
-- [CDAP SDK](http://docs.cdap.io/cdap/current/en/developer-guide/getting-started/standalone/index.html)
+- [CDAP SDK](http://docs.cdap.io/cdap/current/en/developers-manual/getting-started/standalone/index.html)
 
 Let’s Build It!
 ---------------
@@ -32,14 +32,14 @@ Following sections will guide you through building an application from
 scratch. If you are interested in deploying and running the application
 right away, you can clone its source code from this GitHub repository.
 In that case, feel free to skip the next two sections and jump right to
-the [Configuring KafkaSubFlowlet](#configuring-kafkasubflowlet) section.
+the [Build and Run Application](#build-and-run-application) section.
 
 ### Application Design
 
-Realtime processing capability within CDAP is supported by a Flow. The
+Realtime processing capability within CDAP is supported by Flows. The
 application we are building in this guide uses a Flow for processing the
-messages received on a Kafka Topic. The count and size of these messages 
-are persisted in a Dataset and are made available via RESTful endpoint 
+messages received on a Kafka Topic. The count and total size of these messages 
+is persisted in a Dataset and made available via an HTTP RESTful endpoint 
 using a Service.
 
 ![](docs/images/app-design.png)
@@ -65,13 +65,12 @@ contents of these files described below):
     ./src/main/java/co/cask/cdap/guides/kafka/KafkaStatsHandler.java
     ./src/main/java/co/cask/cdap/guides/kafka/KafkaSubFlowlet.java
 
-The application will use the `cdap-packs-kafka` library which includes an implementation of 
-`Kafka08ConsumerFlowlet` which is designed to work with a 0.8.x Kakfa Cluster. If you want to 
-use the application with 0.7.x Kakfa Cluster, please refer to `cdap-packs-kafka` for information 
-on how to build a 0.7.x Kafka Subscriber Flowlet.
+The application will use the `cdap-kafka-pack` library which includes an implementation of the
+`Kafka08ConsumerFlowlet`, which is designed to work with a 0.8.x Kakfa Cluster. If you want to 
+use the application with a 0.7.x Kakfa Cluster, please refer to the documentation of `cdap-kafka-pack`.
 
-You'll need to add the correct `cdap-packs-kafka` library (based on your Kafka Cluster version, 
-cdap-flow-compat-0.8 for this guide) as a dependency to your project's pom.xml:
+You'll need to add the correct `cdap-kafka-pack` library, based on your Kafka Cluster version 
+(`cdap-flow-compat-0.8` for this guide) as a dependency to your project's pom.xml:
 
 ```xml
 ...
@@ -86,7 +85,7 @@ cdap-flow-compat-0.8 for this guide) as a dependency to your project's pom.xml:
 ```
 
 Create the `KafkaIngestionApp` class which declares that the application
-has a Flow, a Service, and creates a Dataset:
+has a Flow, a Service, and creates two Datasets:
 
 ```java
 public class KafkaIngestionApp extends AbstractApplication {
@@ -103,7 +102,7 @@ public class KafkaIngestionApp extends AbstractApplication {
 }
 ```
 
-The `KafkaIngestionFlow` connects the `KafkaSubFlowlet` to `KafkaMsgCounterFlowlet`.
+The `KafkaIngestionFlow` connects the `KafkaSubFlowlet` to the `KafkaMsgCounterFlowlet`.
 
 ```java
 public class KafkaIngestionFlow implements Flow {
@@ -124,7 +123,7 @@ public class KafkaIngestionFlow implements Flow {
 ```
 
 The `KafkaSubFlowlet` makes use of the `Kafka08ConsumerFlowlet` that is
-available in the `cdap-packs-kafka` library:
+available in the `cdap-kafka-pack` library:
 
 ```java
 public class KafkaSubFlowlet extends Kafka08ConsumerFlowlet<byte[], String> {
@@ -160,9 +159,8 @@ public class KafkaSubFlowlet extends Kafka08ConsumerFlowlet<byte[], String> {
 }
 ```
 
-Messages received by the `KafkaSubFlowlet` are consumed by the
-`KafkaMsgCounterFlowlet` that updates the total number of messages and their
-total size in a Dataset:
+Messages received by the `KafkaSubFlowlet` are consumed by the `KafkaMsgCounterFlowlet` 
+that updates the total number of messages and their total size in the `kafkaCounter` Dataset:
 
 ```java
 public class KafkaMsgCounterFlowlet extends AbstractFlowlet {
@@ -203,19 +201,19 @@ public class KafkaStatsHandler extends AbstractHttpServiceHandler {
 }
 ```
 
-### Configuring `KafkaSubFlowlet`
+### Configuring the `KafkaSubFlowlet`
 
-In order to utilize the `KafkaSubFlowlet`, Kafka Zookeeper connection string along with 
-the Kafka Topic must be provided as runtime arguments. You can provide these to the `KafkaSubFlowlet` as 
-runtime arguments of `KafkaIngestionFlow`. The keys of the required runtime arguments are:
+In order to utilize the `KafkaSubFlowlet`, a Kafka Zookeeper connection string along with 
+a Kafka Topic must be provided as runtime arguments. You can provide these to the `KafkaSubFlowlet` as 
+runtime arguments of the `KafkaIngestionFlow`. The keys of these runtime arguments are:
 
 ```console
 kafka.zookeeper
 kafka.topic
 ```
 
-Build & Run
------------
+Build and Run Application
+-------------------------
 The KafkaIngestionApp application can be built and packaged using the Apache Maven command:
 
     mvn clean package
@@ -230,13 +228,13 @@ If you haven't already started a standalone CDAP installation, start it with the
     cdap.sh start
 
 We can then deploy the application to a standalone CDAP installation and
-start its components:
+start its components (note the runtime arguments as described above in [Configuring the KafkaSubFlowlet](#configuring-the-kafkasubflowlet)):
 
     cdap-cli.sh deploy app target/cdap-kafka-ingest-guide-1.0.0.jar
-    cdap-cli.sh start flow KafkaIngestionApp.KafkaIngestionFlow '--kafka.zookeeper=127.0.0.1:2181/kafka --kafka.topic=MyTopic'
-    cdap-cli.sh start service KafkaIngestionApp.KafkaStatsService
-
-Once Flow is started, Kafka Messages are processed as they are published. You can query for
+    curl http://localhost:10000/v2/apps/KafkaIngestionApp/flows/KafkaIngestionFlow/start -d '{"kafka.zookeeper":"127.0.0.1:1234", "kafka.topic":"MyTopic"}'
+    curl -X POST http://localhost:10000/v2/apps/KafkaIngestionApp/services/KafkaStatsService/start
+    
+Once the Flow is started, Kafka Messages are processed as they are published. You can query for
 the average Kafka Message size:
 
     curl http://localhost:10000/v2/apps/KafkaIngestionApp/services/KafkaStatsService/methods/v1/avgSize
