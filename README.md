@@ -243,16 +243,16 @@ Follow the instructions on [Kafka v0.8.x Quickstart](https://kafka.apache.org/08
 The instructions are repeated below for your convenience (assuming you have download the binary distribution). 
 
 ```bash
-tar xzf kafka-<VERSION>.tgz
-cd kafka-<VERSION>
+$ tar xzf kafka-<VERSION>.tgz
+$ cd kafka-<VERSION>
 #Start Zookeeper Server
-bin/zookeeper-server-start.sh config/zookeeper.properties
+$ bin/zookeeper-server-start.sh config/zookeeper.properties
 #Start Kafka Server
-bin/kafka-server-start.sh config/server.properties
+$ bin/kafka-server-start.sh config/server.properties
 #Create a new Kafka topic - MyTopic
-bin/kafka-create-topic.sh --zookeeper localhost:2181 --replica 1 --partition 1 --topic MyTopic
+$ bin/kafka-create-topic.sh --zookeeper localhost:2181 --replica 1 --partition 1 --topic MyTopic
 #Send messages on the topic - MyTopic
-bin/kafka-console-producer.sh --broker-list localhost:9092 --topic MyTopic
+$ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic MyTopic
 ```
 Once the kafka-console-producer.sh script is invoked, you can type messages on the console and every line is published as a message
 to `MyTopic`. Now, go ahead and publish few messages.
