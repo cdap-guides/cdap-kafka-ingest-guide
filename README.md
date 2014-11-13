@@ -211,7 +211,7 @@ kafka.topic
 
 Build and Run Application
 -------------------------
-The KafkaIngestionApp application can be built and packaged using the Apache Maven command:
+The `KafkaIngestionApp` application can be built and packaged using the Apache Maven command:
 
     mvn clean package
 
@@ -254,7 +254,7 @@ $ bin/kafka-create-topic.sh --zookeeper localhost:2181 --replica 1 --partition 1
 $ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic MyTopic
 ```
 Once the kafka-console-producer.sh script is invoked, you can type messages on the console and every line is published as a message
-to `MyTopic`. Go ahead and publish few messages. "CDAP and Kafka, working together!".
+to `MyTopic`. Go ahead and publish a few messages. "CDAP and Kafka, working together!".
 
 Query Results
 -------------
