@@ -1,7 +1,6 @@
-Subscribing to Kafka 
-====================
-Subscribing to a [Kafka](http://kafka.apache.org/) topic and processing the messages received in realtime is a common requirement in
-big data applications. In this guide, you will learn how to accomplish it with the Cask Data Application Platform
+Consuming data from Kafka
+=========================
+Consuming data from a [Kafka](http://kafka.apache.org/) topic and processing the messages received in realtime is a common part of many big data applications. In this guide, you will learn how to accomplish it with the Cask Data Application Platform
 ([CDAP](http://cdap.io)).
 
 What You Will Build
