@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Flowlet to store the statistics of the Messages received.
  */
-public class KafkaMsgCounterFlowlet extends AbstractFlowlet {
-  private static final Logger LOG = LoggerFactory.getLogger(KafkaMsgCounterFlowlet.class);
+public class KafkaMessageCounterFlowlet extends AbstractFlowlet {
+  private static final Logger LOG = LoggerFactory.getLogger(KafkaMessageCounterFlowlet.class);
 
   @UseDataSet(Constants.STATS_TABLE_NAME)
   private KeyValueTable counter;
