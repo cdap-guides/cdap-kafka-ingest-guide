@@ -231,7 +231,7 @@ start its components (note the runtime arguments, as described above in [Configu
     curl http://localhost:10000/v2/apps/KafkaIngestionApp/flows/KafkaIngestionFlow/start -d '{"kafka.zookeeper":"localhost:2181", "kafka.topic":"MyTopic"}'
     curl -X POST http://localhost:10000/v2/apps/KafkaIngestionApp/services/KafkaStatsService/start
     
-Once the Flow is started, Kafka messages are processed as they are published. Now, let's start Kafka publishing messages to `MyTopic`.
+Once the Flow is started, Kafka messages are processed as they are published. Now, let's send data to the Kafka topic.
 
 Publish Messages to a Kakfa topic
 ---------------------------------
