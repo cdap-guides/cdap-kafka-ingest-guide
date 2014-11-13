@@ -29,9 +29,9 @@ import java.util.Map;
 /**
  * Kafka Subscription Flowlet.
  */
-public class KafkaSubFlowlet extends Kafka08ConsumerFlowlet<byte[], String> {
+public class KafkaConsumerFlowlet extends Kafka08ConsumerFlowlet<byte[], String> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(KafkaSubFlowlet.class);
+  private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerFlowlet.class);
 
   @UseDataSet(Constants.OFFSET_TABLE_NAME)
   private KeyValueTable offsetStore;
