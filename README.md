@@ -19,7 +19,7 @@ average size of the messages received. You will:
 - Build a 
   [Service](http://docs.cdap.io/cdap/current/en/developers-manual/building-blocks/services.html)
   to retrieve the analysis results via an HTTP RESTful endpoint; and 
-- Start a Kafka Server v0.8.x and publish messages to the topic, to which CDAP Application has subscribed.
+- Start a Kafka Server v0.8.x and publish messages to the topic which the CDAP Application is subscribed.
 
 What You Will Need
 ------------------
@@ -61,9 +61,9 @@ Maven project. Use the following directory structure (you’ll find
 contents of these files described below):
 
     ./pom.xml
+    ./src/main/java/co/cask/cdap/guides/kafka/KafkaConsumerFlowlet.java
     ./src/main/java/co/cask/cdap/guides/kafka/KafkaIngestionApp.java
     ./src/main/java/co/cask/cdap/guides/kafka/KafkaIngestionFlow.java
-    ./src/main/java/co/cask/cdap/guides/kafka/KafkaConsumerFlowlet.java
     ./src/main/java/co/cask/cdap/guides/kafka/KafkaMessageCounterFlowlet.java
     ./src/main/java/co/cask/cdap/guides/kafka/KafkaStatsHandler.java
 
@@ -123,8 +123,7 @@ public class KafkaIngestionFlow implements Flow {
 }
 ```
 
-The `KafkaConsumerFlowlet` subclasses from the `Kafka08ConsumerFlowlet` that is
-available in the `cdap-kafka-pack` library:
+The `KafkaConsumerFlowlet` subclasses from the `Kafka08ConsumerFlowlet` available in the `cdap-kafka-pack` library:
 
 ```java
 public class KafkaConsumerFlowlet extends Kafka08ConsumerFlowlet<byte[], String> {
@@ -201,9 +200,9 @@ public class KafkaStatsHandler extends AbstractHttpServiceHandler {
 
 In order to utilize the `KafkaConsumerFlowlet`, a Kafka zookeeper connection string along with 
 a Kafka topic must be provided as runtime arguments. You can provide these to the `KafkaConsumerFlowlet` as 
-runtime arguments of the `KafkaIngestionFlow`. The keys of these runtime arguments are 
-(see the [Build and Run Application](#build-and-run-application) section for information on how to pass 
-them to the program at start):
+runtime arguments of the `KafkaIngestionFlow`. (See the [Build and Run Application](#build-and-run-application) 
+section for information on how to pass the arguments to the program at the start). 
+The keys of these runtime arguments are:
 
 ```console
 kafka.zookeeper
@@ -226,40 +225,40 @@ If you haven't already started a standalone CDAP installation, start it with the
     cdap.sh start
 
 We can then deploy the application to a standalone CDAP installation and
-start its components (note the runtime arguments as described above in [Configuring the KafkaConsumerFlowlet](#configuring-the-kafkaconsumerflowlet)):
+start its components (note the runtime arguments, as described above in [Configuring the KafkaConsumerFlowlet](#configuring-the-kafkaconsumerflowlet)):
 
     cdap-cli.sh deploy app target/cdap-kafka-ingest-guide-1.0.0.jar
     curl http://localhost:10000/v2/apps/KafkaIngestionApp/flows/KafkaIngestionFlow/start -d '{"kafka.zookeeper":"localhost:2181", "kafka.topic":"MyTopic"}'
     curl -X POST http://localhost:10000/v2/apps/KafkaIngestionApp/services/KafkaStatsService/start
     
-Once the Flow is started, Kafka messages are processed as they are published. Now, lets start Kafka to publish messages to `MyTopic`.
+Once the Flow is started, Kafka messages are processed as they are published. Now, let's start Kafka publishing messages to `MyTopic`.
 
 Publish Messages to a Kakfa topic
 ---------------------------------
-If you don't have a Kafka v0.8.x running, you can download the binary at [Kafka 0.8.x Download](http://kafka.apache.org/downloads.html).
-Make sure you download v0.8.x since this guide is designed to work with that version. 
+If you don't have Kafka v0.8.x, you can download the binary at [Kafka 0.8.x Download](http://kafka.apache.org/downloads.html).
+Be sure you download v0.8.x, as this guide is designed to work specifically with that version. 
 
-Follow the instructions on [Kafka v0.8.x Quickstart](https://kafka.apache.org/08/quickstart.html), to publish messages to `MyTopic`.
-The instructions are repeated below for your convenience (assuming you have download the binary distribution). 
+Follow the instructions on [Kafka v0.8.x Quickstart](https://kafka.apache.org/08/quickstart.html) to publish messages to `MyTopic`.
+The instructions are repeated below for your convenience and assume you have download the binary distribution. 
 
 ```bash
 $ tar xzf kafka-<VERSION>.tgz
 $ cd kafka-<VERSION>
-#Start Zookeeper Server
+# Start Zookeeper Server
 $ bin/zookeeper-server-start.sh config/zookeeper.properties
-#Start Kafka Server
+# Start Kafka Server
 $ bin/kafka-server-start.sh config/server.properties
-#Create a new Kafka topic - MyTopic
+# Create a new Kafka topic - MyTopic
 $ bin/kafka-create-topic.sh --zookeeper localhost:2181 --replica 1 --partition 1 --topic MyTopic
-#Send messages on the topic - MyTopic
+# Send messages on the topic - MyTopic
 $ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic MyTopic
 ```
 Once the kafka-console-producer.sh script is invoked, you can type messages on the console and every line is published as a message
-to `MyTopic`. Now, go ahead and publish few messages.
+to `MyTopic`. Go ahead and publish few messages. "CDAP and Kafka, working together!".
 
 Query Results
 -------------
-You can query for the average Kafka message size:
+You can query for the average size of the Kafka messages:
 
     curl http://localhost:10000/v2/apps/KafkaIngestionApp/services/KafkaStatsService/methods/v1/avgSize
 
