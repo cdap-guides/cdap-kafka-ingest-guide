@@ -1,6 +1,6 @@
 Subscribing to Kafka 
 ====================
-Subscribing to a Kafka topic and processing the messages received in realtime is a common requirement in
+Subscribing to a [Kafka](http://kafka.apache.org/) topic and processing the messages received in realtime is a common requirement in
 big data applications. In this guide, you will learn how to accomplish it with the Cask Data Application Platform
 ([CDAP](http://cdap.io)).
 
@@ -12,7 +12,7 @@ average size of the messages received. You will:
 - Build a realtime 
   [Flow](http://docs.cdap.io/cdap/current/en/developers-manual/building-blocks/flows-flowlets/index.html)
   that subscribes to a Kafka topic;
-- Build a Flowlet using the [cdap-kafka-pack library](https://github.com/caskdata/cdap-packs);
+- Use the [cdap-kafka-pack library](https://github.com/caskdata/cdap-packs) to build a Flowlet to consume from Kafka;
 - Use a 
   [Dataset](http://docs.cdap.io/cdap/current/en/developers-manual/building-blocks/datasets/index.html)
   to persist the results of the analysis; and
@@ -39,7 +39,7 @@ the [Build and Run Application](#build-and-run-application) section.
 Realtime processing capability within CDAP is supported by Flows. The
 application we are building in this guide uses a Flow for processing the
 messages received on a Kafka topic. The count and total size of these messages 
-is persisted in a Dataset and made available via an HTTP RESTful endpoint 
+are persisted in a Dataset and made available via an HTTP RESTful endpoint 
 using a Service.
 
 ![](docs/images/app-design.png)
@@ -93,7 +93,6 @@ public class KafkaIngestionApp extends AbstractApplication {
   @Override
   public void configure() {
     setName(Constants.APP_NAME);
-    setDescription("Subscribes to Kafka messages - Maintains overall count and size of messages received");
     createDataset(Constants.OFFSET_TABLE_NAME, KeyValueTable.class);
     createDataset(Constants.STATS_TABLE_NAME, KeyValueTable.class);
     addFlow(new KafkaIngestionFlow());
@@ -122,7 +121,7 @@ public class KafkaIngestionFlow implements Flow {
 }
 ```
 
-The `KafkaSubFlowlet` makes use of the `Kafka08ConsumerFlowlet` that is
+The `KafkaSubFlowlet` subclasses from the `Kafka08ConsumerFlowlet` that is
 available in the `cdap-kafka-pack` library:
 
 ```java
@@ -200,7 +199,7 @@ public class KafkaStatsHandler extends AbstractHttpServiceHandler {
 
 In order to utilize the `KafkaSubFlowlet`, a Kafka zookeeper connection string along with 
 a Kafka topic must be provided as runtime arguments. You can provide these to the `KafkaSubFlowlet` as 
-runtime arguments of the `KafkaIngestionFlow`. The keys of these runtime arguments are:
+runtime arguments of the `KafkaIngestionFlow`. The keys of these runtime arguments are (see the Build and Run Application section for how to pass them to the program at start):
 
 ```console
 kafka.zookeeper
