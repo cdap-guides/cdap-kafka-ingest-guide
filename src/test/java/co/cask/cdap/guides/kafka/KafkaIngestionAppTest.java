@@ -63,11 +63,13 @@ public class KafkaIngestionAppTest extends TestBase {
 
   protected static InMemoryZKServer zkServer;
   protected static EmbeddedKafkaServer kafkaServer;
+  protected static int zkPort;
   protected static int kafkaPort;
 
   @BeforeClass
   public static void initialize() throws IOException {
-    zkServer = InMemoryZKServer.builder().setDataDir(TMP_FOLDER.newFolder()).build();
+    zkPort = Networks.getRandomPort();
+    zkServer = InMemoryZKServer.builder().setDataDir(TMP_FOLDER.newFolder()).setPort(zkPort).build();
     zkServer.startAndWait();
 
     kafkaPort = Networks.getRandomPort();
