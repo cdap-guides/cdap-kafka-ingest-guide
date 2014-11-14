@@ -244,7 +244,7 @@ The instructions are repeated below for your convenience and assume you have dow
 ```bash
 $ tar xzf kafka-<VERSION>.tgz
 $ cd kafka-<VERSION>
-# Start Zookeeper Server
+# Start Zookeeper Server [Ignore any java.net.BindException exception thrown (since there could be port conflict with standalone CDAP's Zookeeper Server)]
 $ bin/zookeeper-server-start.sh config/zookeeper.properties
 # Start Kafka Server
 $ bin/kafka-server-start.sh config/server.properties
