@@ -41,6 +41,8 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +56,7 @@ import java.util.concurrent.TimeoutException;
  * Test for {@link KafkaIngestionApp}.
  */
 public class KafkaIngestionAppTest extends TestBase {
+  private static final Logger LOG = LoggerFactory.getLogger(KafkaIngestionAppTest.class);
   private static final String KAFKA_TOPIC = "someTopic";
   private static ZKClientService zkClient;
   private static KafkaClientService kafkaClient;
@@ -71,8 +74,10 @@ public class KafkaIngestionAppTest extends TestBase {
     zkServer.startAndWait();
 
     kafkaPort = Networks.getRandomPort();
-    kafkaServer = new EmbeddedKafkaServer(generateKafkaConfig(zkServer.getConnectionStr(), kafkaPort,
-                                                              TMP_FOLDER.newFolder()));
+    Properties kafkaProperties = generateKafkaConfig(zkServer.getConnectionStr(), kafkaPort,
+                                                     TMP_FOLDER.newFolder());
+    LOG.info("Kafka Server Properties: {}", kafkaProperties);
+    kafkaServer = new EmbeddedKafkaServer(kafkaProperties);
     kafkaServer.startAndWait();
 
     zkClient = ZKClientService.Builder.of(zkServer.getConnectionStr()).build();
