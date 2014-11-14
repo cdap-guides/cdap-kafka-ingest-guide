@@ -79,7 +79,7 @@ You'll need to add the correct `cdap-kafka-pack` library, based on your Kafka cl
 <dependencies>
   ...
   <dependency>
-    <groupId>co.cask.cdap.packs</groupId>
+    <groupId>co.cask.cdap</groupId>
     <artifactId>cdap-kafka-flow-compat-0.8</artifactId>
     <version>0.1.0</version>
   </dependency>
@@ -248,8 +248,10 @@ $ cd kafka-<VERSION>
 $ bin/zookeeper-server-start.sh config/zookeeper.properties
 # Start Kafka Server
 $ bin/kafka-server-start.sh config/server.properties
-# Create a new Kafka topic - MyTopic
+# Create a new Kafka topic - MyTopic [use the correct arguments based on the script available in the bin directory]
 $ bin/kafka-create-topic.sh --zookeeper localhost:2181 --replica 1 --partition 1 --topic MyTopic
+(OR)
+$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --topic MyTopic
 # Send messages on the topic - MyTopic
 $ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic MyTopic
 ```
