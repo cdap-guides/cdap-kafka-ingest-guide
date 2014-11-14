@@ -241,20 +241,19 @@ Be sure you download v0.8.x, as this guide is designed to work specifically with
 Follow the instructions on [Kafka v0.8.x Quickstart](https://kafka.apache.org/08/quickstart.html) to publish messages to `MyTopic`.
 The instructions are repeated below for your convenience and assume you have download the binary distribution. 
 
-```bash
-$ tar xzf kafka-<VERSION>.tgz
-$ cd kafka-<VERSION>
-# Start Zookeeper Server [Ignore any java.net.BindException exception thrown (since there could be port conflict with standalone CDAP's Zookeeper Server)]
-$ bin/zookeeper-server-start.sh config/zookeeper.properties
-# Start Kafka Server
-$ bin/kafka-server-start.sh config/server.properties
-# Create a new Kafka topic - MyTopic [use the correct arguments based on the script available in the bin directory]
-$ bin/kafka-create-topic.sh --zookeeper localhost:2181 --replica 1 --partition 1 --topic MyTopic
-(OR)
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --topic MyTopic
-# Send messages on the topic - MyTopic
-$ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic MyTopic
-```
+    $ tar xzf kafka-<VERSION>.tgz
+    $ cd kafka-<VERSION>
+    # Start Zookeeper Server [Ignore any java.net.BindException exception thrown (since there could be port conflict with standalone CDAP's Zookeeper Server)]
+    $ bin/zookeeper-server-start.sh config/zookeeper.properties
+    # Start Kafka Server
+    $ bin/kafka-server-start.sh config/server.properties
+    # Create a new Kafka topic - MyTopic [use the correct arguments based on the script available in the bin directory]
+    $ bin/kafka-create-topic.sh --zookeeper localhost:2181 --replica 1 --partition 1 --topic MyTopic
+    # (OR)
+    $ bin/kafka-topics.sh --create --zookeeper localhost:2181 --topic MyTopic
+    # Send messages on the topic - MyTopic
+    $ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic MyTopic
+
 Once the kafka-console-producer.sh script is invoked, you can type messages on the console and every line is published as a message
 to `MyTopic`. Go ahead and publish a few messages. "CDAP and Kafka, working together!".
 
