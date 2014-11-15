@@ -249,7 +249,7 @@ The instructions are repeated below for your convenience and assume you have dow
     $ bin/kafka-server-start.sh config/server.properties
     # Create a new Kafka topic - MyTopic [use the correct arguments based on the script available in the bin directory]
     $ bin/kafka-create-topic.sh --zookeeper localhost:2181 --replica 1 --partition 1 --topic MyTopic
-    # (OR)
+    (OR)
     $ bin/kafka-topics.sh --create --zookeeper localhost:2181 --topic MyTopic
     # Send messages on the topic - MyTopic
     $ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic MyTopic
