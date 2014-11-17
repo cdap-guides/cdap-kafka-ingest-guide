@@ -236,7 +236,7 @@ Once the Flow is started, Kafka messages are processed as they are published. No
 Publish Messages to a Kakfa topic
 ---------------------------------
 If you don't have Kafka v0.8.x, you can download the binary at [Kafka 0.8.x Download](http://kafka.apache.org/downloads.html).
-Be sure you download v0.8.x, as this guide is designed to work specifically with that version. 
+Be sure you download v0.8.x (we recommend [Kafka v0.8.0](https://archive.apache.org/dist/kafka/0.8.0/kafka_2.8.0-0.8.0.tar.gz)), as this guide is designed to work specifically with that version. 
 
 Follow the instructions on [Kafka v0.8.x Quickstart](https://kafka.apache.org/08/quickstart.html) to publish messages to `MyTopic`.
 The instructions are repeated below for your convenience and assume you have download the binary distribution. 
