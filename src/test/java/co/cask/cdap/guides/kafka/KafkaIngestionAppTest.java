@@ -18,7 +18,6 @@ package co.cask.cdap.guides.kafka;
 
 import co.cask.cdap.common.utils.Networks;
 import co.cask.cdap.test.ApplicationManager;
-import co.cask.cdap.test.FlowManager;
 import co.cask.cdap.test.RuntimeMetrics;
 import co.cask.cdap.test.RuntimeStats;
 import co.cask.cdap.test.ServiceManager;
@@ -98,8 +97,9 @@ public class KafkaIngestionAppTest extends TestBase {
 
     // Deploy the KafkaIngestionApp application
     ApplicationManager appManager = deployApplication(KafkaIngestionApp.class);
-    FlowManager flowManager = appManager.startFlow(Constants.FLOW_NAME, runtimeArgs);
+    appManager.startFlow(Constants.FLOW_NAME, runtimeArgs);
     ServiceManager serviceManager = appManager.startService(Constants.SERVICE_NAME);
+    serviceManager.waitForStatus(true);
 
     KafkaPublisher publisher = kafkaClient.getPublisher(KafkaPublisher.Ack.ALL_RECEIVED, Compression.NONE);
     KafkaPublisher.Preparer preparer = publisher.prepare(KAFKA_TOPIC);
@@ -122,6 +122,7 @@ public class KafkaIngestionAppTest extends TestBase {
       Assert.assertEquals("8", response.getResponseBodyAsString());
     } finally {
       serviceManager.stop();
+      serviceManager.waitForStatus(false);
     }
     appManager.stopAll();
   }
@@ -144,5 +145,4 @@ public class KafkaIngestionAppTest extends TestBase {
     prop.setProperty("default.replication.factor", "1");
     return prop;
   }
-
 }
