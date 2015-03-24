@@ -16,9 +16,9 @@
 
 package co.cask.cdap.guides.kafka;
 
+import co.cask.cdap.api.metrics.RuntimeMetrics;
 import co.cask.cdap.common.utils.Networks;
 import co.cask.cdap.test.ApplicationManager;
-import co.cask.cdap.test.RuntimeMetrics;
 import co.cask.cdap.test.RuntimeStats;
 import co.cask.cdap.test.ServiceManager;
 import co.cask.cdap.test.TestBase;
