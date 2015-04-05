@@ -67,14 +67,14 @@ Application Implementation
 
 The recommended way to build a CDAP application from scratch is to use a
 Maven project. Use the following directory structure (you’ll find
-contents of these files described below):
+contents of these files described below)::
 
-    ./pom.xml
-    ./src/main/java/co/cask/cdap/guides/kafka/KafkaConsumerFlowlet.java
-    ./src/main/java/co/cask/cdap/guides/kafka/KafkaIngestionApp.java
-    ./src/main/java/co/cask/cdap/guides/kafka/KafkaIngestionFlow.java
-    ./src/main/java/co/cask/cdap/guides/kafka/KafkaMessageCounterFlowlet.java
-    ./src/main/java/co/cask/cdap/guides/kafka/KafkaStatsHandler.java
+  ./pom.xml
+  ./src/main/java/co/cask/cdap/guides/kafka/KafkaConsumerFlowlet.java
+  ./src/main/java/co/cask/cdap/guides/kafka/KafkaIngestionApp.java
+  ./src/main/java/co/cask/cdap/guides/kafka/KafkaIngestionFlow.java
+  ./src/main/java/co/cask/cdap/guides/kafka/KafkaMessageCounterFlowlet.java
+  ./src/main/java/co/cask/cdap/guides/kafka/KafkaStatsHandler.java
 
 The application will use the ``cdap-kafka-pack`` library which includes an implementation of the
 ``Kafka08ConsumerFlowlet``, which is designed to work with a 0.8.x Kakfa Cluster. If you want to 
@@ -225,50 +225,59 @@ Build and Run Application
 
 The ``KafkaIngestionApp`` application can be built and packaged using the Apache Maven command::
 
-    mvn clean package
+  $ mvn clean package
 
 Note that the remaining commands assume that the ``cdap-cli.sh`` script is
 available on your PATH. If this is not the case, please add it::
 
-    export PATH=$PATH:<CDAP home>/bin
+  $ export PATH=$PATH:<CDAP home>/bin
 
 If you haven't already started a standalone CDAP installation, start it with the command::
 
-    cdap.sh start
+  $ cdap.sh start
 
-We can then deploy the application to a standalone CDAP installation and
-start its components (note the runtime arguments, as described above in `Configuring the KafkaConsumerFlowlet <#configuring-the-kafkaconsumerflowlet>`__)::
+We can then deploy the application to a standalone CDAP installation::
 
-    cdap-cli.sh deploy app target/cdap-kafka-ingest-guide-1.0.0.jar
-    curl http://localhost:10000/v2/apps/KafkaIngestionApp/flows/KafkaIngestionFlow/start -d '{"kafka.zookeeper":"localhost:2181", "kafka.topic":"MyTopic"}'
-    curl -X POST http://localhost:10000/v2/apps/KafkaIngestionApp/services/KafkaStatsService/start
+  $ cdap-cli.sh deploy app target/cdap-kafka-ingest-guide-<version>.jar
+  
+We can then start its components (note the runtime arguments, as described above in `Configuring the KafkaConsumerFlowlet <#configuring-the-kafkaconsumerflowlet>`__)::
+
+  $ curl -w'\n' http://localhost:10000/v3/namespaces/default/apps/KafkaIngestionApp/flows/KafkaIngestionFlow/start -d '{"kafka.zookeeper":"localhost:2181", "kafka.topic":"MyTopic"}'
+  $ curl -X POST http://localhost:10000/v2/apps/KafkaIngestionApp/services/KafkaStatsService/start
+
+You can also use the CDAP CLI to start the Flow and Service::
+
+  $ cdap-cli.sh start flow KafkaIngestionApp.KafkaIngestionFlow \'"kafka.zookeeper"="localhost:2181", "kafka.topic"="MyTopic"\'  
+  $ cdap-cli.sh start service KafkaIngestionApp.KafkaStatsService
     
 Once the Flow is started, Kafka messages are processed as they are published. Now, let's send data to the Kafka topic.
 
 Publish Messages to a Kakfa topic
 ---------------------------------
 If you don't have Kafka v0.8.x, you can download the binary at `Kafka 0.8.x Download <http://kafka.apache.org/downloads.html>`__.
-Be sure you download v0.8.x (we recommend `Kafka v0.8.0 <https://archive.apache.org/dist/kafka/0.8.0/kafka_2.8.0-0.8.0.tar.gz>`__), as this guide is designed to work specifically with that version. 
+Be sure you download v0.8.x (we recommend `Kafka v0.8.0 <https://archive.apache.org/dist/kafka/0.8.0/kafka_2.8.0-0.8.0.tar.gz>`__), 
+as this guide is designed to work specifically with that version. 
 
 Follow the instructions on `Kafka v0.8.x Quickstart <https://kafka.apache.org/08/quickstart.html>`__ to publish messages to ``MyTopic``.
 The instructions are repeated below for your convenience and assume you have downloaded the binary distribution::
 
-    $ tar xzf kafka-<VERSION>.tgz
-    $ cd kafka-<VERSION>
-    
-    # Start Zookeeper Server
-    $ bin/zookeeper-server-start.sh config/zookeeper.properties
-    
-    # Start Kafka Server: Ignore any java.net.BindException exceptions thrown (since there could be port conflict with standalone CDAP's Zookeeper Server)
-    $ bin/kafka-server-start.sh config/server.properties
-    
-    # Create a new Kafka topic - MyTopic [use the correct arguments based on the script available in the bin directory]
-    $ bin/kafka-create-topic.sh --zookeeper localhost:2181 --replica 1 --partition 1 --topic MyTopic
-      (OR)
-    $ bin/kafka-topics.sh --create --zookeeper localhost:2181 --topic MyTopic --partitions 1 --replication-factor 1
-    
-    # Send messages on the topic - MyTopic
-    $ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic MyTopic
+  $ tar xzf kafka-<VERSION>.tgz
+  $ cd kafka-<VERSION>
+  
+  # Start Zookeeper Server
+  $ bin/zookeeper-server-start.sh config/zookeeper.properties
+  
+  # Start Kafka Server: Ignore any java.net.BindException exceptions thrown (since there could be port conflict with standalone CDAP's Zookeeper Server)
+  $ bin/kafka-server-start.sh config/server.properties
+  
+  # Create a new Kafka topic: MyTopic (use the correct arguments based on the script available in the bin directory)
+  $ bin/kafka-create-topic.sh --zookeeper localhost:2181 --replica 1 --partition 1 --topic MyTopic
+
+  # (OR)
+  $ bin/kafka-topics.sh --create --zookeeper localhost:2181 --topic MyTopic --partitions 1 --replication-factor 1
+  
+  # Send messages on the topic: MyTopic
+  $ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic MyTopic
 
 Once the ``kafka-console-producer.sh`` script is invoked, you can type messages on the console and every line is published as a message
 to ``MyTopic``. Go ahead and publish a few messages, such as::
@@ -279,11 +288,11 @@ Query Results
 -------------
 You can query for the average size of the Kafka messages:
 
-    curl http://localhost:10000/v2/apps/KafkaIngestionApp/services/KafkaStatsService/methods/v1/avgSize
+  $ curl -w'\n' http://localhost:10000/v3/namespaces/default/apps/KafkaIngestionApp/services/KafkaStatsService/methods/v1/avgSize
 
 Example output:
 
-    6
+  6
 
 Share and Discuss!
 ==================
