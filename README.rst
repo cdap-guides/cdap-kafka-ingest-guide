@@ -286,11 +286,11 @@ to ``MyTopic``. Go ahead and publish a few messages, such as::
 
 Query Results
 -------------
-You can query for the average size of the Kafka messages:
+You can query for the average size of the Kafka messages::
 
   $ curl -w'\n' http://localhost:10000/v3/namespaces/default/apps/KafkaIngestionApp/services/KafkaStatsService/methods/v1/avgSize
 
-Example output:
+Example output::
 
   6
 
