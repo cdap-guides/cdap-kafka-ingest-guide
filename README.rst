@@ -2,7 +2,7 @@
 Consuming Data from Kafka
 =========================
 
-Consuming data from a `Kafka <http://kafka.apache.org/>`__ topic and processing the messages received in realtime is 
+Consuming data from a `Kafka <http://kafka.apache.org/>`__ topic and processing the messages received in real-time is 
 a common part of many big data applications. In this guide, you will learn how to accomplish it with the 
 Cask Data Application Platform (`CDAP <http://cdap.io>`__).
 
@@ -12,7 +12,7 @@ What You Will Build
 You will build a CDAP application that consumes data from a Kafka cluster v0.8.x on a specific topic and computes the 
 average size of the messages received. You will:
 
-- Build a realtime 
+- Build a real-time 
   `Flow <http://docs.cdap.io/cdap/current/en/developers-manual/building-blocks/flows-flowlets/index.html>`__
   that subscribes to a Kafka topic;
 - Use the `cdap-kafka-pack library <https://github.com/caskdata/cdap-packs>`__ to build a Flowlet to consume from Kafka;
@@ -44,7 +44,7 @@ the `Build and Run Application <#build-and-run-application>`__ section.
 Application Implementation
 --------------------------
 
-Realtime processing capability within CDAP is supported by Flows. The
+Real-time processing capability within CDAP is supported by Flows. The
 application we are building in this guide uses a Flow for processing the
 messages received on a Kafka topic. The count and total size of these messages 
 are persisted in a Dataset and made available via an HTTP RESTful endpoint 
