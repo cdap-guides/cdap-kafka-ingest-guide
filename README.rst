@@ -2,7 +2,7 @@
 Consuming Data from Kafka
 =========================
 
-Consuming data from a `Kafka <http://kafka.apache.org/>`__ topic and processing the messages received in real-time is 
+Consuming data from a `Kafka <http://kafka.apache.org/>`__ topic and processing the messages received in real time is 
 a common part of many big data applications. In this guide, you will learn how to accomplish it with the 
 Cask Data Application Platform (`CDAP <http://cdap.io>`__).
 
