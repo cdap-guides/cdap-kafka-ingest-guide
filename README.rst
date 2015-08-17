@@ -208,7 +208,7 @@ average message size and serve it over HTTP:
 Configuring the *KafkaConsumerFlowlet*
 --------------------------------------
 
-In order to utilize the ``KafkaConsumerFlowlet``, a Kafka zookeeper connection string along with 
+In order to utilize the ``KafkaConsumerFlowlet``, a Kafka ZooKeeper connection string along with 
 a Kafka topic must be provided as runtime arguments. You can provide these to the ``KafkaConsumerFlowlet`` as 
 runtime arguments of the ``KafkaIngestionFlow``. (See the `Build and Run Application <#build-and-run-application>`__ 
 section for information on how to pass the arguments to the program at the start.)
@@ -264,10 +264,10 @@ The instructions are repeated below for your convenience and assume you have dow
   $ tar xzf kafka-<VERSION>.tgz
   $ cd kafka-<VERSION>
   
-  # Start Zookeeper Server
+  # Start ZooKeeper Server
   $ bin/zookeeper-server-start.sh config/zookeeper.properties
   
-  # Start Kafka Server: Ignore any java.net.BindException exceptions thrown (since there could be port conflict with standalone CDAP's Zookeeper Server)
+  # Start Kafka Server: Ignore any java.net.BindException exceptions thrown (since there could be port conflict with standalone CDAP's ZooKeeper Server)
   $ bin/kafka-server-start.sh config/server.properties
   
   # Create a new Kafka topic: MyTopic (use the correct arguments based on the script available in the bin directory)
