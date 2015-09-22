@@ -238,7 +238,8 @@ If you haven't already started a standalone CDAP installation, start it with the
 
 We can then deploy the application to a standalone CDAP installation::
 
-  $ cdap-cli.sh deploy app target/cdap-kafka-ingest-guide-<version>.jar
+  $ cdap-cli.sh load artifact target/cdap-kafka-ingest-guide-<version>.jar
+  $ cdap-cli.sh create app KafkaIngestionApp cdap-kafka-ingest-guide <version> user
   
 We can then start its components (note the runtime arguments, as described above in `Configuring the KafkaConsumerFlowlet <#configuring-the-kafkaconsumerflowlet>`__)::
 
