@@ -19,7 +19,7 @@ package co.cask.cdap.guides.kafka;
 import co.cask.cdap.api.metrics.RuntimeMetrics;
 import co.cask.cdap.common.utils.Networks;
 import co.cask.cdap.test.ApplicationManager;
-import co.cask.cdap.test.RuntimeStats;
+import co.cask.cdap.test.FlowManager;
 import co.cask.cdap.test.ServiceManager;
 import co.cask.cdap.test.TestBase;
 import co.cask.common.http.HttpRequest;
@@ -97,8 +97,8 @@ public class KafkaIngestionAppTest extends TestBase {
 
     // Deploy the KafkaIngestionApp application
     ApplicationManager appManager = deployApplication(KafkaIngestionApp.class);
-    appManager.startFlow(Constants.FLOW_NAME, runtimeArgs);
-    ServiceManager serviceManager = appManager.startService(Constants.SERVICE_NAME);
+    FlowManager flowManager = appManager.getFlowManager(Constants.FLOW_NAME).start(runtimeArgs);
+    ServiceManager serviceManager = appManager.getServiceManager(Constants.SERVICE_NAME).start();
     serviceManager.waitForStatus(true);
 
     KafkaPublisher publisher = kafkaClient.getPublisher(KafkaPublisher.Ack.ALL_RECEIVED, Compression.NONE);
@@ -109,9 +109,7 @@ public class KafkaIngestionAppTest extends TestBase {
     }
     preparer.send();
 
-    RuntimeMetrics countMetrics = RuntimeStats.getFlowletMetrics(KafkaIngestionApp.class.getSimpleName(),
-                                                                 Constants.FLOW_NAME,
-                                                                 Constants.COUNTER_FLOWLET);
+    RuntimeMetrics countMetrics = flowManager.getFlowletMetrics(Constants.COUNTER_FLOWLET);
     countMetrics.waitForProcessed(10, 10, TimeUnit.SECONDS);
     try {
       URL serviceURL = serviceManager.getServiceURL();
