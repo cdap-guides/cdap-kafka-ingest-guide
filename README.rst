@@ -116,19 +116,15 @@ The ``KafkaIngestionFlow`` connects the ``KafkaConsumerFlowlet`` to the ``KafkaM
 
 .. code:: java
 
-  public class KafkaIngestionFlow implements Flow {
+  public class KafkaIngestionFlow extends AbstractFlow {
 
     @Override
-    public FlowSpecification configure() {
-      return FlowSpecification.Builder.with()
-        .setName(Constants.FLOW_NAME)
-        .setDescription("Subscribes to Kafka messages")
-        .withFlowlets()
-          .add(Constants.KAFKA_FLOWLET, new KafkaConsumerFlowlet())
-          .add(Constants.COUNTER_FLOWLET, new KafkaMessageCounterFlowlet())
-        .connect()
-          .from(Constants.KAFKA_FLOWLET).to(Constants.COUNTER_FLOWLET)
-        .build();
+    public void configure() {
+      setName(Constants.FLOW_NAME);
+      setDescription("Subscribes to Kafka messages");
+      addFlowlet(Constants.KAFKA_FLOWLET, new KafkaConsumerFlowlet());
+      addFlowlet(Constants.COUNTER_FLOWLET, new KafkaMessageCounterFlowlet());
+      connect(Constants.KAFKA_FLOWLET, Constants.COUNTER_FLOWLET);
     }
   }
 

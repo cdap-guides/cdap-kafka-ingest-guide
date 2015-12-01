@@ -16,8 +16,7 @@
 
 package co.cask.cdap.guides.kafka;
 
-import co.cask.cdap.api.flow.Flow;
-import co.cask.cdap.api.flow.FlowSpecification;
+import co.cask.cdap.api.flow.AbstractFlow;
 
 /**
  * Flow to ingest Kafka Messages (works with Kafka Cluster v0.8.x).
@@ -29,18 +28,14 @@ import co.cask.cdap.api.flow.FlowSpecification;
  * </ul>
  * </p>
  */
-public class KafkaIngestionFlow implements Flow {
+public class KafkaIngestionFlow extends AbstractFlow {
 
   @Override
-  public FlowSpecification configure() {
-    return FlowSpecification.Builder.with()
-      .setName(Constants.FLOW_NAME)
-      .setDescription("Subscribes to Kafka messages")
-      .withFlowlets()
-        .add(Constants.KAFKA_FLOWLET, new KafkaConsumerFlowlet())
-        .add(Constants.COUNTER_FLOWLET, new KafkaMessageCounterFlowlet())
-      .connect()
-        .from(Constants.KAFKA_FLOWLET).to(Constants.COUNTER_FLOWLET)
-      .build();
+  public void configure() {
+    setName(Constants.FLOW_NAME);
+    setDescription("Subscribes to Kafka messages");
+    addFlowlet(Constants.KAFKA_FLOWLET, new KafkaConsumerFlowlet());
+    addFlowlet(Constants.COUNTER_FLOWLET, new KafkaMessageCounterFlowlet());
+    connect(Constants.KAFKA_FLOWLET, Constants.COUNTER_FLOWLET);
   }
 }
