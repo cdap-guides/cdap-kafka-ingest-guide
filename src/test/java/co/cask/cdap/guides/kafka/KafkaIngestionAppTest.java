@@ -65,7 +65,8 @@ public class KafkaIngestionAppTest extends TestBase {
   protected static int kafkaPort;
 
   @BeforeClass
-  public static void initialize() throws IOException {
+  public static void initialize() throws Exception {
+    TestBase.initialize();
     zkServer = InMemoryZKServer.builder().setDataDir(TMP_FOLDER.newFolder()).build();
     zkServer.startAndWait();
 
