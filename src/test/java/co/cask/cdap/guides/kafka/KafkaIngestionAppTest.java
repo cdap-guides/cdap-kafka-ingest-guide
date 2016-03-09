@@ -40,9 +40,11 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import scala.Product;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
@@ -90,6 +92,13 @@ public class KafkaIngestionAppTest extends TestBase {
     zkServer.stopAndWait();
   }
 
+  private ApplicationManager deployApplicationWithScalaJar() {
+    URL classUrl = Product.class.getClassLoader().getResource("scala/Product.class");
+    String path = classUrl.getFile();
+
+    return deployApplication(KafkaIngestionApp.class, new File(URI.create(path.substring(0, path.indexOf("!/")))));
+  }
+
   @Test
   public void test() throws TimeoutException, InterruptedException, IOException {
     Map<String, String> runtimeArgs = Maps.newHashMap();
@@ -97,7 +106,7 @@ public class KafkaIngestionAppTest extends TestBase {
     runtimeArgs.put("kafka.zookeeper", zkServer.getConnectionStr());
 
     // Deploy the KafkaIngestionApp application
-    ApplicationManager appManager = deployApplication(KafkaIngestionApp.class);
+    ApplicationManager appManager = deployApplicationWithScalaJar();
     FlowManager flowManager = appManager.getFlowManager(Constants.FLOW_NAME).start(runtimeArgs);
     ServiceManager serviceManager = appManager.getServiceManager(Constants.SERVICE_NAME).start();
     serviceManager.waitForStatus(true);
