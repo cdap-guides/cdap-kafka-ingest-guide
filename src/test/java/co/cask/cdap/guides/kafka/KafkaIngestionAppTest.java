@@ -37,14 +37,10 @@ import org.apache.twill.zookeeper.ZKClientService;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import scala.Product;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
@@ -59,16 +55,12 @@ public class KafkaIngestionAppTest extends TestBase {
   private static ZKClientService zkClient;
   private static KafkaClientService kafkaClient;
 
-  @ClassRule
-  public static final TemporaryFolder TMP_FOLDER = new TemporaryFolder();
-
-  protected static InMemoryZKServer zkServer;
-  protected static EmbeddedKafkaServer kafkaServer;
-  protected static int kafkaPort;
+  private static InMemoryZKServer zkServer;
+  private static EmbeddedKafkaServer kafkaServer;
+  private static int kafkaPort;
 
   @BeforeClass
-  public static void initialize() throws Exception {
-    TestBase.initialize();
+  public static void init() throws Exception {
     zkServer = InMemoryZKServer.builder().setDataDir(TMP_FOLDER.newFolder()).build();
     zkServer.startAndWait();
 
@@ -92,13 +84,6 @@ public class KafkaIngestionAppTest extends TestBase {
     zkServer.stopAndWait();
   }
 
-  private ApplicationManager deployApplicationWithScalaJar() {
-    URL classUrl = Product.class.getClassLoader().getResource("scala/Product.class");
-    String path = classUrl.getFile();
-
-    return deployApplication(KafkaIngestionApp.class, new File(URI.create(path.substring(0, path.indexOf("!/")))));
-  }
-
   @Test
   public void test() throws TimeoutException, InterruptedException, IOException {
     Map<String, String> runtimeArgs = Maps.newHashMap();
@@ -106,7 +91,7 @@ public class KafkaIngestionAppTest extends TestBase {
     runtimeArgs.put("kafka.zookeeper", zkServer.getConnectionStr());
 
     // Deploy the KafkaIngestionApp application
-    ApplicationManager appManager = deployApplicationWithScalaJar();
+    ApplicationManager appManager = deployApplication(KafkaIngestionApp.class);
     FlowManager flowManager = appManager.getFlowManager(Constants.FLOW_NAME).start(runtimeArgs);
     ServiceManager serviceManager = appManager.getServiceManager(Constants.SERVICE_NAME).start();
     serviceManager.waitForStatus(true);
