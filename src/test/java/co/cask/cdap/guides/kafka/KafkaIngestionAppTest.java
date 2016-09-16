@@ -26,7 +26,15 @@ import co.cask.common.http.HttpRequest;
 import co.cask.common.http.HttpRequests;
 import co.cask.common.http.HttpResponse;
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.AbstractIdleService;
+import kafka.javaapi.producer.Producer;
+import kafka.javaapi.producer.ProducerData;
+import kafka.producer.ProducerConfig;
+import kafka.server.KafkaConfig;
+import kafka.server.KafkaServerStartable;
 import org.apache.twill.internal.kafka.EmbeddedKafkaServer;
 import org.apache.twill.internal.kafka.client.ZKKafkaClientService;
 import org.apache.twill.internal.zookeeper.InMemoryZKServer;
@@ -42,6 +50,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -76,6 +86,30 @@ public class KafkaIngestionAppTest extends TestBase {
     kafkaClient.startAndWait();
   }
 
+  /**
+   * A {@link com.google.common.util.concurrent.Service} implementation for running an instance of Kafka server in
+   * the same process.
+   */
+  public static final class EmbeddedKafkaServer extends AbstractIdleService {
+
+    private final KafkaServerStartable server;
+
+    public EmbeddedKafkaServer(Properties properties) {
+      server = new KafkaServerStartable(new KafkaConfig(properties));
+    }
+
+    @Override
+    protected void startUp() throws Exception {
+      server.startup();
+    }
+
+    @Override
+    protected void shutDown() throws Exception {
+      server.shutdown();
+      server.awaitShutdown();
+    }
+  }
+
   @AfterClass
   public static void cleanup() {
     kafkaClient.stopAndWait();
@@ -96,13 +130,9 @@ public class KafkaIngestionAppTest extends TestBase {
     ServiceManager serviceManager = appManager.getServiceManager(Constants.SERVICE_NAME).start();
     serviceManager.waitForStatus(true);
 
-    KafkaPublisher publisher = kafkaClient.getPublisher(KafkaPublisher.Ack.ALL_RECEIVED, Compression.NONE);
-    KafkaPublisher.Preparer preparer = publisher.prepare(KAFKA_TOPIC);
-
     for (int i = 0; i < 10; i++) {
-      preparer.add(Charsets.UTF_8.encode("message" + i), i);
+      sendMessage(KAFKA_TOPIC, ImmutableMap.of(Integer.toString(i), "message" + i));
     }
-    preparer.send();
 
     RuntimeMetrics countMetrics = flowManager.getFlowletMetrics(Constants.COUNTER_FLOWLET);
     countMetrics.waitForProcessed(10, 10, TimeUnit.SECONDS);
@@ -118,6 +148,21 @@ public class KafkaIngestionAppTest extends TestBase {
       serviceManager.waitForStatus(false);
     }
     appManager.stopAll();
+  }
+
+  private void sendMessage(String topic, Map<String, String> messages) {
+    Properties prop = new Properties();
+    prop.setProperty("zk.connect", zkServer.getConnectionStr());
+    prop.setProperty("serializer.class", "kafka.serializer.StringEncoder");
+
+    ProducerConfig prodConfig = new ProducerConfig(prop);
+
+    List<ProducerData<String, String>> outMessages = new ArrayList<>();
+    for (Map.Entry<String, String> entry : messages.entrySet()) {
+      outMessages.add(new ProducerData<>(topic, entry.getKey(), ImmutableList.of(entry.getValue())));
+    }
+    Producer<String, String> producer = new Producer<>(prodConfig);
+    producer.send(outMessages);
   }
 
   private static Properties generateKafkaConfig(String zkConnectStr, int port, File logDir) {
@@ -136,6 +181,15 @@ public class KafkaIngestionAppTest extends TestBase {
     prop.setProperty("zookeeper.connect", zkConnectStr);
     prop.setProperty("zookeeper.connection.timeout.ms", "1000000");
     prop.setProperty("default.replication.factor", "1");
+
+    // These are for Kafka-0.7
+    prop.setProperty("brokerid", "1");
+    prop.setProperty("zk.connect", zkConnectStr);
+    prop.setProperty("zk.connectiontimeout.ms", "1000000");
+    prop.setProperty("log.retention.size", "1000");
+    prop.setProperty("log.cleanup.interval.mins", "1");
+    prop.setProperty("log.file.size", "1000");
+
     return prop;
   }
 }

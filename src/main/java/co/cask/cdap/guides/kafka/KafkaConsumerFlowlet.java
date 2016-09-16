@@ -19,7 +19,7 @@ package co.cask.cdap.guides.kafka;
 import co.cask.cdap.api.annotation.UseDataSet;
 import co.cask.cdap.api.dataset.lib.KeyValueTable;
 import co.cask.cdap.api.flow.flowlet.OutputEmitter;
-import co.cask.cdap.kafka.flow.Kafka08ConsumerFlowlet;
+import co.cask.cdap.kafka.flow.Kafka07ConsumerFlowlet;
 import co.cask.cdap.kafka.flow.KafkaConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * Kafka Subscription Flowlet.
  */
-public class KafkaConsumerFlowlet extends Kafka08ConsumerFlowlet<byte[], String> {
+public class KafkaConsumerFlowlet extends Kafka07ConsumerFlowlet<String> {
 
   private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerFlowlet.class);
 
