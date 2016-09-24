@@ -24,7 +24,9 @@ import co.cask.cdap.kafka.flow.KafkaConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Kafka Subscription Flowlet.
@@ -54,5 +56,21 @@ public class KafkaConsumerFlowlet extends Kafka08ConsumerFlowlet<byte[], String>
   protected void processMessage(String value) throws Exception {
     LOG.info("Message: {}", value);
     emitter.emit(value);
+  }
+
+  @Override
+  protected byte[] decodeKey(@Nullable ByteBuffer buffer) {
+    if (buffer == null) {
+      return new byte[0];
+    }
+    return super.decodeKey(buffer);
+  }
+
+  @Override
+  protected String decodePayload(@Nullable ByteBuffer buffer) {
+    if (buffer == null) {
+      return "";
+    }
+    return super.decodePayload(buffer);
   }
 }
