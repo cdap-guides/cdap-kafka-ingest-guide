@@ -223,19 +223,19 @@ The ``KafkaIngestionApp`` application can be built and packaged using the Apache
 
   $ mvn clean package
 
-Note that the remaining commands assume that the ``cdap-cli.sh`` script is
+Note that the remaining commands assume that the ``cdap`` script is
 available on your PATH. If this is not the case, please add it::
 
   $ export PATH=$PATH:<CDAP home>/bin
 
 If you haven't already started a standalone CDAP installation, start it with the command::
 
-  $ cdap.sh start
+  $ cdap sdk start
 
 We can then deploy the application to a standalone CDAP installation::
 
-  $ cdap-cli.sh load artifact target/cdap-kafka-ingest-guide-<version>.jar
-  $ cdap-cli.sh create app KafkaIngestionApp cdap-kafka-ingest-guide <version> user
+  $ cdap cli load artifact target/cdap-kafka-ingest-guide-<version>.jar
+  $ cdap cli create app KafkaIngestionApp cdap-kafka-ingest-guide <version> user
   
 We can then start its components (note the runtime arguments, as described above in `Configuring the KafkaConsumerFlowlet <#configuring-the-kafkaconsumerflowlet>`__)::
 
@@ -244,8 +244,8 @@ We can then start its components (note the runtime arguments, as described above
 
 You can also use the CDAP CLI to start the Flow and Service::
 
-  $ cdap-cli.sh start flow KafkaIngestionApp.KafkaIngestionFlow \'"kafka.zookeeper"="localhost:2181", "kafka.topic"="MyTopic"\'  
-  $ cdap-cli.sh start service KafkaIngestionApp.KafkaStatsService
+  $ cdap cli start flow KafkaIngestionApp.KafkaIngestionFlow \'"kafka.zookeeper"="localhost:2181", "kafka.topic"="MyTopic"\'  
+  $ cdap cli start service KafkaIngestionApp.KafkaStatsService
     
 Once the Flow is started, Kafka messages are processed as they are published. Now, let's send data to the Kafka topic.
 
@@ -297,7 +297,7 @@ Have a question? Discuss at the `CDAP User Mailing List. <https://groups.google.
 
 License
 =======
-Copyright © 2014-2015 Cask Data, Inc.
+Copyright © 2014-2017 Cask Data, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may
 not use this file except in compliance with the License. You may obtain
