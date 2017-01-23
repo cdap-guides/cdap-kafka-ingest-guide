@@ -239,8 +239,8 @@ We can then deploy the application to a standalone CDAP installation::
   
 We can then start its components (note the runtime arguments, as described above in `Configuring the KafkaConsumerFlowlet <#configuring-the-kafkaconsumerflowlet>`__)::
 
-  $ curl -w'\n' http://localhost:10000/v3/namespaces/default/apps/KafkaIngestionApp/flows/KafkaIngestionFlow/start -d '{"kafka.zookeeper":"localhost:2181", "kafka.topic":"MyTopic"}'
-  $ curl -X POST http://localhost:10000/v3/namespaces/default/apps/KafkaIngestionApp/services/KafkaStatsService/start
+  $ curl -w'\n' http://localhost:11015/v3/namespaces/default/apps/KafkaIngestionApp/flows/KafkaIngestionFlow/start -d '{"kafka.zookeeper":"localhost:2181", "kafka.topic":"MyTopic"}'
+  $ curl -X POST http://localhost:11015/v3/namespaces/default/apps/KafkaIngestionApp/services/KafkaStatsService/start
 
 You can also use the CDAP CLI to start the Flow and Service::
 
@@ -285,7 +285,7 @@ Query Results
 -------------
 You can query for the average size of the Kafka messages::
 
-  $ curl -w'\n' http://localhost:10000/v3/namespaces/default/apps/KafkaIngestionApp/services/KafkaStatsService/methods/v1/avgSize
+  $ curl -w'\n' http://localhost:11015/v3/namespaces/default/apps/KafkaIngestionApp/services/KafkaStatsService/methods/v1/avgSize
 
 Example output::
 
